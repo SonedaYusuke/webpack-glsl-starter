@@ -1,1 +1,1 @@
-(()=>{"use strict";console.log(100)})();
+(()=>{"use strict";console.log(100),console.log("waiwai")})();

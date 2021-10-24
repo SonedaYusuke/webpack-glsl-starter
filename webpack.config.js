@@ -23,19 +23,25 @@ const webpackConfig = {
 		open: true,
 		hot: true,
 	},
+	resolve: {
+		alias: {
+			"~": path.resolve(__dirname, "src"),
+		},
+	},
 };
 
-glob.sync("*.js", { cwd: "src/js" }).forEach((jsName) => {
+glob.sync("*.js", {cwd: "src/js"}).forEach((jsName) => {
 	const dirName = path.basename(jsName, ".js");
 	const tplName = path.basename(jsName, ".js") + ".html";
-	webpackConfig.entry[dirName === "index" ? jsName : dirName + "/index.js"] = path.resolve("src", JS_DIR, jsName);
+	webpackConfig.entry[dirName === "index" ? jsName : dirName + "/index.js"] =
+		path.resolve("src", JS_DIR, jsName);
 	webpackConfig.plugins.push(
 		new HtmlWebpackPlugin({
 			template: path.resolve(__dirname, "src", HTML_DIR, tplName),
 			filename: dirName === "index" ? "index.html" : dirName + "/index.html",
 			inject: "body",
 			includeSiblingChunks: true,
-			chunks: ["vendor.js", dirName + "/index.js"],
+			chunks: ["vendor.js", dirName === "index" ? "index.js" : dirName + "/index.js"],
 		})
 	);
 });

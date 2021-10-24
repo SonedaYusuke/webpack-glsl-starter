@@ -1,3 +1,4 @@
-import {a} from "./lib/module";
+import {a} from "~/js/lib/module";
 
 console.log(a);
+console.log("waiwai");
