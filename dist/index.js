@@ -1,1 +1,1 @@
-console.log("bbb");
+(()=>{"use strict";console.log(100)})();
