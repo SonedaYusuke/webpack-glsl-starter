@@ -2,6 +2,7 @@ const path = require("path");
 const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 
 const HTML_DIR = "html";
 const JS_DIR = "js";
@@ -11,6 +12,7 @@ const webpackConfig = {
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		filename: "[name]",
+		assetModuleFilename: "images/[hash][ext][query]",
 	},
 	plugins: [
 		new MiniCssExtractPlugin({
@@ -29,12 +31,17 @@ const webpackConfig = {
 		hot: true,
 	},
 	resolve: {
+		roots: [path.resolve(__dirname, "src")],
 		alias: {
 			"~": path.resolve(__dirname, "src"),
 		},
 	},
 	module: {
 		rules: [
+			{
+				test: /\.html$/i,
+				loader: "html-loader",
+			},
 			// Sassファイルの読み込みとコンパイル
 			{
 				test: /\.scss/, // 対象となるファイルの拡張子
@@ -64,6 +71,10 @@ const webpackConfig = {
 						},
 					},
 				],
+			},
+			{
+				test: /\.(png|svg|jpg|jpeg|gif)$/i,
+				type: "asset/resource",
 			},
 		],
 	},
