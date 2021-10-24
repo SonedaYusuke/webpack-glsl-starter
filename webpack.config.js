@@ -1,20 +1,37 @@
 const path = require("path");
+const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-module.exports = {
-	entry: "./src/js/index.js",
+const HTML_DIR = "html";
+const JS_DIR = "js";
+
+const webpackConfig = {
+	entry: {},
 	output: {
 		path: path.resolve(__dirname, "dist"),
-		filename: "bundle.js",
+		filename: "[name]",
 	},
-	plugins: [
-		new HtmlWebpackPlugin({
-			template: path.resolve(__dirname, "src", "html", "index.html"),
-			filename: "index.html",
-		}),
-		new HtmlWebpackPlugin({
-			template: path.resolve(__dirname, "src", "html", "about.html"),
-			filename: "about.html",
-		}),
-	],
+	plugins: [],
+	optimization: {
+		splitChunks: {
+			name: "vendor.js",
+			chunks: "initial",
+		},
+	},
 };
+
+glob.sync("*.js", {cwd: "src/js"}).forEach((jsName) => {
+	webpackConfig.entry[jsName] = path.resolve("src", JS_DIR, jsName);
+	const tplName = path.basename(jsName, ".js") + ".html";
+	webpackConfig.plugins.push(
+		new HtmlWebpackPlugin({
+			template: path.resolve(__dirname, "src", HTML_DIR, tplName),
+			filename: tplName,
+			inject: "body",
+			includeSiblingChunks: true,
+			chunks: ["vendor.js", jsName],
+		})
+	);
+});
+
+module.exports = webpackConfig;
