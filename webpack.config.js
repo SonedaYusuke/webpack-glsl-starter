@@ -18,6 +18,11 @@ const webpackConfig = {
 			chunks: "initial",
 		},
 	},
+	devServer: {
+		host: "0.0.0.0",
+		open: true,
+		hot: true,
+	},
 };
 
 glob.sync("*.js", {cwd: "src/js"}).forEach((jsName) => {
