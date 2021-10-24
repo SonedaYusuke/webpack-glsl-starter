@@ -5,3 +5,10 @@
 p {
   color: $color-red;
 }
+
+.background {
+  background-image: url("/assets/images/test.png");
+  width: 200px;
+  height: 200px;
+  border: 1px solid black;
+}
