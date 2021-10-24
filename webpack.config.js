@@ -1,6 +1,7 @@
 const path = require("path");
 const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const HTML_DIR = "html";
 const JS_DIR = "js";
@@ -11,7 +12,11 @@ const webpackConfig = {
 		path: path.resolve(__dirname, "dist"),
 		filename: "[name]",
 	},
-	plugins: [],
+	plugins: [
+		new MiniCssExtractPlugin({
+			filename: "style.css",
+		}),
+	],
 	optimization: {
 		splitChunks: {
 			name: "vendor.js",
@@ -28,6 +33,40 @@ const webpackConfig = {
 			"~": path.resolve(__dirname, "src"),
 		},
 	},
+	module: {
+		rules: [
+			// Sassファイルの読み込みとコンパイル
+			{
+				test: /\.scss/, // 対象となるファイルの拡張子
+				use: [
+					// CSSファイルを抽出するように MiniCssExtractPlugin のローダーを指定
+					{
+						loader: MiniCssExtractPlugin.loader,
+					},
+					// CSSをバンドルするためのローダー
+					{
+						loader: "css-loader",
+						options: {
+							//URL の解決を無効に
+							url: false,
+							// ソースマップを有効に
+							sourceMap: true,
+						},
+					},
+					// Sass を CSS へ変換するローダー
+					{
+						loader: "sass-loader",
+						options: {
+							// dart-sass を優先
+							implementation: require("sass"),
+							// ソースマップを有効に
+							sourceMap: true,
+						},
+					},
+				],
+			},
+		],
+	},
 };
 
 glob.sync("*.js", {cwd: "src/js"}).forEach((jsName) => {
@@ -41,7 +80,10 @@ glob.sync("*.js", {cwd: "src/js"}).forEach((jsName) => {
 			filename: dirName === "index" ? "index.html" : dirName + "/index.html",
 			inject: "body",
 			includeSiblingChunks: true,
-			chunks: ["vendor.js", dirName === "index" ? "index.js" : dirName + "/index.js"],
+			chunks: [
+				"vendor.js",
+				dirName === "index" ? "index.js" : dirName + "/index.js",
+			],
 		})
 	);
 });

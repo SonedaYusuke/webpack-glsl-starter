@@ -1,3 +1,4 @@
+import "~/scss/style.scss";
 import {a} from "~/js/lib/module";
 
 console.log(a);
